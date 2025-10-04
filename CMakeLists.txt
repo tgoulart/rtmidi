@@ -36,6 +36,7 @@ if(WINDOWS)
 endif()
 
 # Build Options
+option(BUILD_UNINSTALL_TARGET "Build uninstall target" OFF)
 set(RTMIDI_TARGETNAME_UNINSTALL "uninstall" CACHE STRING "Name of 'uninstall' build target")
 
 # API Options
@@ -269,14 +270,16 @@ install(EXPORT RtMidiTargets
         DESTINATION ${RTMIDI_CMAKE_DESTINATION}
         NAMESPACE RtMidi::)
 
-# Configure uninstall target.
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/RtMidiConfigUninstall.cmake.in"
-    "${CMAKE_BINARY_DIR}/RtMidiConfigUninstall.cmake" @ONLY)
+if(BUILD_UNINSTALL_TARGET)
+  # Configure uninstall target.
+  configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/RtMidiConfigUninstall.cmake.in"
+      "${CMAKE_BINARY_DIR}/RtMidiConfigUninstall.cmake" @ONLY)
 
-# Create uninstall target.
-add_custom_target(${RTMIDI_TARGETNAME_UNINSTALL}
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/RtMidiConfigUninstall.cmake)
+  # Create uninstall target.
+  add_custom_target(${RTMIDI_TARGETNAME_UNINSTALL}
+      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/RtMidiConfigUninstall.cmake)
+endif()
 
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/rtmidi.pc
